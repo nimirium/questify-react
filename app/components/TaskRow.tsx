@@ -3,9 +3,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 import React from "react";
 import TagButton from "./TagButton";
 import {COLOR, TAG} from "../constants";
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
-export default function ToDo({task, index, updateTaskCompletion, updateTaskText, handleKeyPress, toggleTag}: NoteItemProps) {
+export default function TaskRow({task, index, updateTaskCompletion, updateTaskText, handleKeyPress, toggleTag, autoFocus}: NoteItemProps) {
     const noteClass = classNames("m-1 px-1 grow outline-0 resize-none rounded self-center", {
         "bg-pink-300": task.completed,
         "bg-amber-100": !task.completed
@@ -13,7 +12,6 @@ export default function ToDo({task, index, updateTaskCompletion, updateTaskText,
 
     return (
         <div className="flex">
-            <DragIndicatorIcon className="my-1"/>
             <input
                 type="checkbox"
                 className="form-checkbox h-6 w-6 text-cyan-600 m-1 self-center	"
@@ -25,7 +23,8 @@ export default function ToDo({task, index, updateTaskCompletion, updateTaskText,
                 onInput={(e: React.ChangeEvent<HTMLInputElement>) => updateTaskText(index, e.target.value)}
                 onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => handleKeyPress(e, index)}
                 className={noteClass}
-                id={task.id.toString()}
+                id={task.id}
+                autoFocus={autoFocus}
             />
             <div className="flex justify-center text-center self-center	text-sm	text-gray-500">
                 <TagButton tag={TAG.TWO_MINUTES}

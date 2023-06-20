@@ -1,4 +1,4 @@
-type UpdateTaskCompletion = (id: number, completed: boolean) => void;
+type UpdateTaskCompletion = (id: string, completed: boolean) => void;
 type UpdateTaskText = (index: number, text: string) => void;
 type HandleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>, index: number) => void;
 type ToggleTag = (index: number, tag: string) => void;
@@ -10,6 +10,7 @@ type NoteItemProps = {
     updateTaskText: UpdateTaskText;
     handleKeyPress: HandleKeyPress;
     toggleTag: ToggleTag;
+    autoFocus: boolean;
 };
 
 type TagButtonProps = {
