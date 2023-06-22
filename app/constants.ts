@@ -12,4 +12,11 @@ export enum COLOR {
     YELLOW = 'bg-yellow-200',
 
     BLUE = 'bg-blue-200',
+    VIOLET = 'bg-violet-300',
 }
+
+export const tagScores = {
+    [TAG.TWO_MINUTES]: 4,
+    [TAG.URGENT]: 2,
+    [TAG.IMPORTANT]: 1,
+};

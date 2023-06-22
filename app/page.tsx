@@ -1,8 +1,9 @@
 "use client"; // This is a client component 👈🏽
 
-import Note from "./components/Note";
+import ToDoNoteOrQuest from "./components/ToDoNoteOrQuest";
 
 export default function Home() {
+
     return (
         <main className="font-sans" dir="ltr">
             <div className="flex flex-col flex-center">
@@ -10,7 +11,7 @@ export default function Home() {
                     Questify To-Do
                 </div>
             </div>
-            <Note/>
+            <ToDoNoteOrQuest/>
         </main>
     )
 }

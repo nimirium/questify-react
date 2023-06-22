@@ -3,6 +3,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import React from "react";
 import TagButton from "./TagButton";
 import {COLOR, TAG} from "../constants";
+import Checkbox from "./Checkbox";
 
 export default function TaskRow({task, index, updateTaskCompletion, updateTaskText, handleKeyPress, toggleTag, autoFocus}: NoteItemProps) {
     const noteClass = classNames("m-1 px-1 grow outline-0 resize-none rounded self-center", {
@@ -12,12 +13,7 @@ export default function TaskRow({task, index, updateTaskCompletion, updateTaskTe
 
     return (
         <div className="flex">
-            <input
-                type="checkbox"
-                className="form-checkbox h-6 w-6 text-cyan-600 m-1 self-center	"
-                checked={task.completed}
-                onChange={() => updateTaskCompletion(task.id, !task.completed)}
-            />
+            <Checkbox checked={task.completed} onChange={() => updateTaskCompletion(task.id, !task.completed)} />
             <TextareaAutosize
                 value={task.text}
                 onInput={(e: React.ChangeEvent<HTMLInputElement>) => updateTaskText(index, e.target.value)}
