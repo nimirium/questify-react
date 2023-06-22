@@ -4,7 +4,7 @@ export default function NoteTitle({title, setTitle}: { title: string, setTitle: 
     return (
         <input type="text"
                placeholder="[ Note title ]"
-               className="m-1 px-1 grow outline-0 resize-none rounded self-center bg-amber-100 text-center text-2xl w-full"
+               className="m-1 px-1 grow outline-0 resize-none rounded self-center bg-transparent text-center text-2xl w-full"
                value={title}
                onChange={(e) => setTitle(e.target.value)}
         />

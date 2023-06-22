@@ -6,17 +6,34 @@ import axios from 'axios';
 import LoadingIndicator from "./LoadingIndicator";
 import QuestTitleRow from "./QuestTitleRow";
 import QuestDescriptionRow from "./QuestDescriptionRow";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 
-export default function QuestView({tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView}: NoteProps) {
-    const [status, setStatus] = useState<TaskStatus>("generating");
+export default function QuestView({tasks, setTasks, title, handleTaskCompletion, setQuestView}: NoteProps) {
+    const [status, setStatus] = useState<TaskStatus>("error");
+    // const [status, setStatus] = useState<TaskStatus>("generating");
     const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
+    const [questlineName, setQuestlineName] = useState<string>(title);
+
+    const questTasks = tasks.filter(t => t.text.length > 0);
+
+    useEffect(() => {
+        const initialQuestlineName = localStorage.getItem('questlineName') ?? '';
+        if (initialQuestlineName != null) {
+            setQuestlineName(initialQuestlineName);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('questlineName', questlineName);
+    }, [questlineName]);
 
     function generateQuests(tasks: Task[]) {
         if (tasks.length > 0) {
             setStatus("generating");
-            axios.post(`http://localhost:5000/questify`, tasks)
+            axios.post(`http://localhost:5000/questify`, tasks.filter(t => t.text.length > 0))
                 .then(res => {
-                    const quests = res.data;
+                    const quests = res.data.quests;
                     setTasks(tasks => {
                         return [...tasks].map(t => {
                             const quest = quests[t.id];
@@ -28,6 +45,7 @@ export default function QuestView({tasks, setTasks, title, setTitle, handleTaskC
                         })
                     })
                     setStatus("ready")
+                    setQuestlineName(res.data.questlineName)
                 }).catch(err => {
                 console.error(err);
                 setStatus("error")
@@ -43,39 +61,45 @@ export default function QuestView({tasks, setTasks, title, setTitle, handleTaskC
         if (status == "ready") {
             return;
         }
-        console.log(`tasks: ${JSON.stringify(tasks)}`)
-        const tasksWithoutQuests = tasks.filter((task) => task.questName == null || task.questName.length === 0);
-        console.log(`tasksWithoutQuests: ${JSON.stringify(tasksWithoutQuests)}`)
+        const tasksWithoutQuests = questTasks.filter((task) => task.questName == null || task.questName.length === 0);
         generateQuests(tasksWithoutQuests);
     }, [])
 
     function regenerateAll() {
-        generateQuests(tasks);
+        generateQuests(questTasks);
+    }
+
+    function handleQuestTitleClick(id: string) {
+        setSelectedQuest(id === selectedQuest ? null : id);
     }
 
     return (
         <>
             <div className="flex justify-center">
-                <div className="flex flex-col grow bg-amber-100 p-6 m-5 rounded-lg text-cyan-700 text-lg drop-shadow max-w-3xl">
+                <div className="flex flex-col grow bg-amber-800 p-6 m-5 rounded-lg text-amber-200 text-lg drop-shadow max-w-3xl">
 
-                    <div>status: {status}</div>
+                    <NoteTitle title={questlineName} setTitle={setQuestlineName}/>
 
-                    <NoteTitle title={title} setTitle={setTitle}/>
+                    {status === "generating" && <LoadingIndicator text={"Generating quests..."}/>}
 
-                    {status === "generating" && <LoadingIndicator/>}
+                    {status === "error" &&
+                        <div className="text-center">Could not generate quests, please try again.</div>
+                    }
 
-                    {status === "ready" && tasks.map((task, index) => {
+                    {status === "ready" && questTasks.map((task, index) => {
                         return (
-                            <div key={task.id} className="my-2 p-2 border border-stone-500 rounded-lg" onClick={() => setSelectedQuest(task.id)}>
-                                <QuestTitleRow task={task} handleTaskCompletion={handleTaskCompletion}/>
+                            <div key={task.id} className="my-2 border border-stone-300 rounded-lg bg-amber-700 text-amber-50">
+                                <QuestTitleRow task={task}
+                                               onClick={() => handleQuestTitleClick(task.id)}
+                                               handleTaskCompletion={handleTaskCompletion}/>
                                 {selectedQuest === task.id &&
-                                <QuestDescriptionRow questDescription={task.questDescription}/>}
+                                <QuestDescriptionRow task={task}/>}
                             </div>);
                     })}
 
-                    <div className="flex justify-center text-center pt-2 pb-3">
-                        {status == 'ready' && <ColorButton tag="Regenerate" color={COLOR.ORANGE} onClick={regenerateAll}/>}
-                        <ColorButton tag="Back to To-Do View" color={COLOR.VIOLET} onClick={() => setQuestView(false)}/>
+                    <div className="flex justify-center text-center pt-2 pb-3 text-amber-800">
+                        <ColorButton tag="To-Do View" color="bg-amber-300" onClick={() => setQuestView(false)} icon={() => <ArrowBackIcon/>}/>
+                        {['ready', 'error'].includes(status) && <ColorButton tag="Regenerate" color={COLOR.ORANGE} onClick={regenerateAll} icon={() => <AutorenewIcon/>}/>}
                     </div>
 
                 </div>

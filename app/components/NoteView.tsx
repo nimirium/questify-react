@@ -3,8 +3,9 @@ import {useEffect, useState} from "react";
 import ColorButton from "./TagButton";
 import {COLOR, TAG, tagScores} from "../constants";
 import SortIcon from '@mui/icons-material/Sort';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import NoteTitle from "./NoteTitle";
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView}: NoteProps) {
     const [toFocus, setToFocus] = useState<string | null>(null);
@@ -17,7 +18,6 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
                 input.focus();
                 input.selectionStart = input.selectionEnd = input.value.length;  // keep the cursor at the end of the text
             }
-            // Clear the toFocus after the focus operation has been attempted
             setToFocus(null);
         }
     }, [toFocus]);
@@ -85,6 +85,8 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
             text: "",
             completed: false,
             tags: [],
+            questName: "",
+            questDescription: "",
         }]);
         setToFocus(newId);
     }
@@ -117,38 +119,36 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
     }
 
     return (
-        <>
-            <div className="flex justify-center">
-                <div className="flex flex-col grow bg-amber-100 p-6 m-5 rounded-lg text-cyan-700 text-lg drop-shadow max-w-3xl">
+        <div className="flex justify-center mx-2">
+            <div className="flex flex-col grow bg-amber-100 md:p-6 md:m-5 rounded-lg text-cyan-700 text-lg drop-shadow max-w-3xl">
 
-                    <div>
-                        <SortIcon className="float-left" onClick={onAutoSortTasks}/>
-                        <DeleteForeverIcon className="float-right"/>
-                    </div>
-
-                    <NoteTitle title={title} setTitle={setTitle}/>
-
-                    <div className="flex justify-center text-center pt-2 pb-3 text-sm">
-                        <ColorButton tag={TAG.TWO_MINUTES}
-                                     color={tag == null || tag === TAG.TWO_MINUTES ? COLOR.GREEN : COLOR.GRAY}
-                                     onClick={() => handleToggleFilterTag(TAG.TWO_MINUTES)}/>
-                        <ColorButton tag={TAG.URGENT}
-                                     color={tag == null || tag === TAG.URGENT ? COLOR.ORANGE : COLOR.GRAY}
-                                     onClick={() => handleToggleFilterTag(TAG.URGENT)}/>
-                        <ColorButton tag={TAG.IMPORTANT}
-                                     color={tag == null || tag === TAG.IMPORTANT ? COLOR.YELLOW : COLOR.GRAY}
-                                     onClick={() => handleToggleFilterTag(TAG.IMPORTANT)}/>
-                    </div>
-
-                    {taskElements}
-
-                    <div className="flex justify-center text-center pt-2 pb-3">
-                        <ColorButton tag="Add" color={COLOR.BLUE} onClick={handleAddTask}/>
-                        <ColorButton tag="Questify" color={COLOR.VIOLET} onClick={() => setQuestView(true)}/>
-                    </div>
-
+                <div>
+                    <SortIcon className="float-left m-3" onClick={onAutoSortTasks}/>
                 </div>
+
+                <NoteTitle title={title} setTitle={setTitle}/>
+
+                <div className="flex justify-center text-center pt-2 pb-3 text-sm">
+                    <ColorButton tag={TAG.TWO_MINUTES}
+                                 color={tag == null || tag === TAG.TWO_MINUTES ? COLOR.GREEN : COLOR.GRAY}
+                                 onClick={() => handleToggleFilterTag(TAG.TWO_MINUTES)}/>
+                    <ColorButton tag={TAG.URGENT}
+                                 color={tag == null || tag === TAG.URGENT ? COLOR.ORANGE : COLOR.GRAY}
+                                 onClick={() => handleToggleFilterTag(TAG.URGENT)}/>
+                    <ColorButton tag={TAG.IMPORTANT}
+                                 color={tag == null || tag === TAG.IMPORTANT ? COLOR.YELLOW : COLOR.GRAY}
+                                 onClick={() => handleToggleFilterTag(TAG.IMPORTANT)}/>
+                </div>
+
+                {taskElements}
+
+                <div className="flex justify-center text-center pt-2 pb-3">
+                    <ColorButton tag="Add" color={COLOR.BLUE} onClick={handleAddTask} icon={() => <AddIcon/>}/>
+                    <ColorButton tag="Questify" color={COLOR.VIOLET} onClick={() => setQuestView(true)}
+                                 icon={() => <AutoFixHighIcon/>}/>
+                </div>
+
             </div>
-        </>
+        </div>
     );
 }

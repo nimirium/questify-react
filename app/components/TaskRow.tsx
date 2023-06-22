@@ -23,13 +23,13 @@ export default function TaskRow({task, index, updateTaskCompletion, updateTaskTe
                 autoFocus={autoFocus}
             />
             <div className="flex justify-center text-center self-center	text-sm	text-gray-500">
-                <TagButton tag={TAG.TWO_MINUTES}
+                <TagButton tag={TAG.TWO_MINUTES} tinyTag={'2M'}
                            color={task.tags.includes(TAG.TWO_MINUTES) ? COLOR.GREEN : COLOR.GRAY}
                            onClick={() => toggleTag(index, TAG.TWO_MINUTES)}/>
-                <TagButton tag={TAG.URGENT}
+                <TagButton tag={TAG.URGENT} tinyTag={'U'}
                            color={task.tags.includes(TAG.URGENT) ? COLOR.ORANGE : COLOR.GRAY}
                            onClick={() => toggleTag(index, TAG.URGENT)}/>
-                <TagButton tag={TAG.IMPORTANT}
+                <TagButton tag={TAG.IMPORTANT} tinyTag={'I'}
                            color={task.tags.includes(TAG.IMPORTANT) ? COLOR.YELLOW : COLOR.GRAY}
                            onClick={() => toggleTag(index, TAG.IMPORTANT)}/>
             </div>

@@ -15,8 +15,10 @@ type NoteItemProps = {
 
 type TagButtonProps = {
     tag: string;
+    tinyTag: string | null;
     color: string;
     onClick: () => void;
+    icon: () => Element;
 }
 
 type NoteProps = {
