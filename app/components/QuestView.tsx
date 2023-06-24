@@ -9,23 +9,23 @@ import QuestDescriptionRow from "./QuestDescriptionRow";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 
-export default function QuestView({tasks, setTasks, title, handleTaskCompletion, setQuestView}: NoteProps) {
-    const [status, setStatus] = useState<TaskStatus>("error");
-    // const [status, setStatus] = useState<TaskStatus>("generating");
+export default function QuestView({noteId, tasks, setTasks, title, handleTaskCompletion, setQuestView}: NoteProps) {
+    // const [status, setStatus] = useState<TaskStatus>("error");
+    const [status, setStatus] = useState<TaskStatus>("generating");
     const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
     const [questlineName, setQuestlineName] = useState<string>(title);
 
     const questTasks = tasks.filter(t => t.text.length > 0);
 
     useEffect(() => {
-        const initialQuestlineName = localStorage.getItem('questlineName') ?? '';
+        const initialQuestlineName = localStorage.getItem(`note_${noteId}_questlineName`) ?? '';
         if (initialQuestlineName != null) {
             setQuestlineName(initialQuestlineName);
         }
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('questlineName', questlineName);
+        localStorage.setItem(`note_${noteId}_questlineName`, questlineName);
     }, [questlineName]);
 
     function generateQuests(tasks: Task[]) {

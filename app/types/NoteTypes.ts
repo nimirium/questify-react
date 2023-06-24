@@ -4,6 +4,7 @@ type HandleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>, index: n
 type ToggleTag = (index: number, tag: string) => void;
 
 type NoteItemProps = {
+    noteId: string;
     task: Task;
     index: number,
     updateTaskCompletion: HandleTaskCompletion;
@@ -22,10 +23,12 @@ type TagButtonProps = {
 }
 
 type NoteProps = {
+    noteId: string;
     tasks: Task[];
     setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
     title: string;
     setTitle: React.Dispatch<React.SetStateAction<string>>;
     handleTaskCompletion: HandleTaskCompletion;
     setQuestView: React.Dispatch<React.SetStateAction<boolean>>;
+    deleteNote: (noteId: string) => void;
 }

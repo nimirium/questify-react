@@ -5,7 +5,7 @@ import TagButton from "./TagButton";
 import {COLOR, TAG} from "../constants";
 import Checkbox from "./Checkbox";
 
-export default function TaskRow({task, index, updateTaskCompletion, updateTaskText, handleKeyPress, toggleTag, autoFocus}: NoteItemProps) {
+export default function TaskRow({noteId, task, index, updateTaskCompletion, updateTaskText, handleKeyPress, toggleTag, autoFocus}: NoteItemProps) {
     const noteClass = classNames("m-1 px-1 grow outline-0 resize-none rounded self-center", {
         "bg-pink-300": task.completed,
         "bg-amber-100": !task.completed
@@ -13,13 +13,13 @@ export default function TaskRow({task, index, updateTaskCompletion, updateTaskTe
 
     return (
         <div className="flex">
-            <Checkbox checked={task.completed} onChange={() => updateTaskCompletion(task.id, !task.completed)} />
+            <Checkbox checked={task.completed} onClick={() => updateTaskCompletion(task.id, !task.completed)} />
             <TextareaAutosize
                 value={task.text}
                 onInput={(e: any) => updateTaskText(index, e.target.value)}
                 onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => handleKeyPress(e, index)}
                 className={noteClass}
-                id={task.id}
+                id={`input_${noteId}_${task.id}`}
                 autoFocus={autoFocus}
             />
             <div className="flex justify-center text-center self-center	text-sm	text-gray-500">

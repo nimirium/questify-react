@@ -6,14 +6,15 @@ import SortIcon from '@mui/icons-material/Sort';
 import NoteTitle from "./NoteTitle";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
-export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView}: NoteProps) {
+export default function NoteView({noteId, tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView, deleteNote}: NoteProps) {
     const [toFocus, setToFocus] = useState<string | null>(null);
     const [tag, setTag] = useState<string | null>(null);
 
     useEffect(() => {
         if (toFocus != null) {
-            const input: HTMLInputElement = document.getElementById(toFocus.toString()) as HTMLInputElement;
+            const input: HTMLInputElement = document.getElementById(`input_${noteId}_${toFocus}`) as HTMLInputElement;
             if (input) {
                 input.focus();
                 input.selectionStart = input.selectionEnd = input.value.length;  // keep the cursor at the end of the text
@@ -94,7 +95,7 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
     let displayTasks = tag ? tasks.filter(task => task.tags.includes(tag)) : tasks
 
     const taskElements = displayTasks.map((task, index) =>
-        <TaskRow key={task.id} task={task}
+        <TaskRow key={task.id} task={task} noteId={noteId}
                  index={index}
                  updateTaskCompletion={handleTaskCompletion}
                  updateTaskText={handleTaskTextChange}
@@ -124,6 +125,7 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
 
                 <div>
                     <SortIcon className="float-left m-3" onClick={onAutoSortTasks}/>
+                    <DeleteForeverIcon className="float-right m-3" onClick={() => deleteNote(noteId)}/>
                 </div>
 
                 <NoteTitle title={title} setTitle={setTitle}/>

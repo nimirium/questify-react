@@ -2,7 +2,7 @@ import NoteView from "./NoteView";
 import {useEffect, useState} from "react";
 import QuestView from "./QuestView";
 
-export default function ToDoNoteOrQuest () {
+export default function ToDoNoteOrQuest ({noteId, deleteNote}: {noteId: string, deleteNote: (noteId: string) => void}) {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [title, setTitle] = useState<string>('');
     const [questView, setQuestView] = useState<boolean>(false);
@@ -10,8 +10,11 @@ export default function ToDoNoteOrQuest () {
     useEffect(() => {
         // Initialize tasks and note title from local storage
         const firstId =  '1';
-        const initialTasks = localStorage.getItem('tasks');
-        const initialTitle = localStorage.getItem('title') ?? '';
+        let initialTasks = localStorage.getItem(`note_${noteId}_tasks`);
+        if (!initialTasks && noteId == '1') {
+            initialTasks = localStorage.getItem(`tasks`);
+        }
+        const initialTitle = localStorage.getItem(`note_${noteId}_title`) ?? '';
         setTasks(initialTasks ? JSON.parse(initialTasks) : [
             {
                 id: firstId,
@@ -26,11 +29,11 @@ export default function ToDoNoteOrQuest () {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('tasks', JSON.stringify(tasks));
+        localStorage.setItem(`note_${noteId}_tasks`, JSON.stringify(tasks));
     }, [tasks]);
 
     useEffect(() => {
-        localStorage.setItem('title', title);
+        localStorage.setItem(`note_${noteId}_title`, title);
     }, [title]);
 
     const handleTaskCompletion: HandleTaskCompletion = (id, completed) => {
@@ -42,10 +45,10 @@ export default function ToDoNoteOrQuest () {
     return (
         <>
             {questView ?
-                <QuestView tasks={tasks} setTasks={setTasks} title={title} setTitle={setTitle}
-                           handleTaskCompletion={handleTaskCompletion} setQuestView={setQuestView}/> :
-                <NoteView tasks={tasks} setTasks={setTasks} title={title} setTitle={setTitle}
-                          handleTaskCompletion={handleTaskCompletion} setQuestView={setQuestView}/>}
+                <QuestView noteId={noteId} tasks={tasks} setTasks={setTasks} title={title} setTitle={setTitle}
+                           handleTaskCompletion={handleTaskCompletion} setQuestView={setQuestView} deleteNote={deleteNote}/> :
+                <NoteView noteId={noteId} tasks={tasks} setTasks={setTasks} title={title} setTitle={setTitle}
+                          handleTaskCompletion={handleTaskCompletion} setQuestView={setQuestView} deleteNote={deleteNote}/>}
 
         </>
     )

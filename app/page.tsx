@@ -1,6 +1,6 @@
 "use client"; // This is a client component 👈🏽
 
-import ToDoNoteOrQuest from "./components/ToDoNoteOrQuest";
+import ListOfNotesOrQuests from "./components/ListOfNotesOrQuests";
 
 export default function Home() {
     return (
@@ -10,7 +10,7 @@ export default function Home() {
                     <span>Questify To-Do</span>
                 </div>
             </div>
-            <ToDoNoteOrQuest/>
+            <ListOfNotesOrQuests/>
         </main>
     )
 }
