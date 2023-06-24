@@ -15,8 +15,8 @@ export enum COLOR {
     VIOLET = 'bg-violet-300',
 }
 
-export const tagScores = {
-    [TAG.TWO_MINUTES]: 4,
-    [TAG.URGENT]: 2,
-    [TAG.IMPORTANT]: 1,
+export const tagScores: { [key: string]: number } = {
+    "2 minutes": 4,
+    "urgent": 2,
+    "important": 1,
 };

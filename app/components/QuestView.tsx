@@ -31,7 +31,8 @@ export default function QuestView({tasks, setTasks, title, handleTaskCompletion,
     function generateQuests(tasks: Task[]) {
         if (tasks.length > 0) {
             setStatus("generating");
-            axios.post(`http://localhost:5000/questify`, tasks.filter(t => t.text.length > 0))
+            // axios.post(`http://localhost:5000/questify`, tasks.filter(t => t.text.length > 0))
+            axios.post(`https://questify-72477d5ba67d.herokuapp.com/questify`, tasks.filter(t => t.text.length > 0))
                 .then(res => {
                     const quests = res.data.quests;
                     setTasks(tasks => {

@@ -1,4 +1,4 @@
-export default function Checkbox({checked, onChange, className}: { checked: boolean, onChange: () => void, className?: string }) {
+export default function Checkbox({checked, onChange, className}: { checked: boolean, onChange: (e: any) => void, className?: string }) {
     return (
         <input
             type="checkbox"

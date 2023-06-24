@@ -16,7 +16,7 @@ export default function TaskRow({task, index, updateTaskCompletion, updateTaskTe
             <Checkbox checked={task.completed} onChange={() => updateTaskCompletion(task.id, !task.completed)} />
             <TextareaAutosize
                 value={task.text}
-                onInput={(e: React.ChangeEvent<HTMLInputElement>) => updateTaskText(index, e.target.value)}
+                onInput={(e: any) => updateTaskText(index, e.target.value)}
                 onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => handleKeyPress(e, index)}
                 className={noteClass}
                 id={task.id}

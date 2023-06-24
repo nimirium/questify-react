@@ -15,10 +15,10 @@ type NoteItemProps = {
 
 type TagButtonProps = {
     tag: string;
-    tinyTag: string | null;
+    tinyTag?: string;
     color: string;
     onClick: () => void;
-    icon: () => Element;
+    icon?: () => JSX.Element;
 }
 
 type NoteProps = {

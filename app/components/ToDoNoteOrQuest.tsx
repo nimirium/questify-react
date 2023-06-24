@@ -9,7 +9,7 @@ export default function ToDoNoteOrQuest () {
 
     useEffect(() => {
         // Initialize tasks and note title from local storage
-        const firstId =  crypto.randomUUID();
+        const firstId =  '1';
         const initialTasks = localStorage.getItem('tasks');
         const initialTitle = localStorage.getItem('title') ?? '';
         setTasks(initialTasks ? JSON.parse(initialTasks) : [

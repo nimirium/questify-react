@@ -24,7 +24,7 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
 
     const handleTaskTextChange: HandleTaskTextChange = (index, text) => {
         if ('\n' === text.slice(-1)) {
-            const newId = crypto.randomUUID();
+            const newId = (tasks.reduce((maxId, task) => Math.max(Number(task.id), maxId), -1) + 1).toString();
             setTasks((tasks) => {
                 const newTasks = [...tasks];
                 newTasks.splice(index + 1, 0, {
@@ -79,7 +79,7 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
     }
 
     function handleAddTask() {
-        const newId = crypto.randomUUID();
+        const newId = (tasks.reduce((maxId, task) => Math.max(Number(task.id), maxId), -1) + 1).toString();
         setTasks((notes) => [...notes, {
             id: newId,
             text: "",
@@ -105,8 +105,8 @@ export default function NoteView({tasks, setTasks, title, setTitle, handleTaskCo
 
     function onAutoSortTasks() {
         setTasks((tasks) => [...tasks].sort((a, b) => {
-            const aScore = a.tags.reduce((score, tag) => score + (tagScores[tag] || 0), 0);
-            const bScore = b.tags.reduce((score, tag) => score + (tagScores[tag] || 0), 0);
+            const aScore: number = a.tags.reduce((score, tag) => tagScores[tag] ? score + tagScores[tag] : 0, 0);
+            const bScore: number = b.tags.reduce((score, tag) => tagScores[tag] ? score + tagScores[tag] : 0, 0);
 
             // If both tasks are completed or uncompleted, sort by score.
             if ((a.completed && b.completed) || (!a.completed && !b.completed)) {
