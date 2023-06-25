@@ -7,6 +7,7 @@ import NoteTitle from "./NoteTitle";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import {DragDropContext, Droppable, Draggable, DropResult} from "react-beautiful-dnd";
 
 export default function NoteView({noteId, tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView, deleteNote}: NoteProps) {
     const [toFocus, setToFocus] = useState<string | null>(null);
@@ -21,7 +22,7 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
             }
             setToFocus(null);
         }
-    }, [toFocus]);
+    }, [toFocus, noteId]);
 
     const handleTaskTextChange: HandleTaskTextChange = (index, text) => {
         if ('\n' === text.slice(-1)) {
@@ -92,18 +93,6 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
         setToFocus(newId);
     }
 
-    let displayTasks = tag ? tasks.filter(task => task.tags.includes(tag)) : tasks
-
-    const taskElements = displayTasks.map((task, index) =>
-        <TaskRow key={task.id} task={task} noteId={noteId}
-                 index={index}
-                 updateTaskCompletion={handleTaskCompletion}
-                 updateTaskText={handleTaskTextChange}
-                 handleKeyPress={handleTaskKeyPress}
-                 toggleTag={handleToggleTaskTag}
-                 autoFocus={toFocus === task.id}
-        />);
-
     function onAutoSortTasks() {
         setTasks((tasks) => [...tasks].sort((a, b) => {
             const aScore: number = a.tags.reduce((score, tag) => tagScores[tag] ? score + tagScores[tag] : 0, 0);
@@ -118,6 +107,58 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
             return a.completed ? 1 : -1;
         }));
     }
+
+    function handleDragEnd(result: DropResult) {
+        if (!result.destination || result.source.index === result.destination?.index) {
+            return;
+        }
+        const newTasks = [...tasks];
+        const [removed] = newTasks.splice(result.source.index, 1);
+        newTasks.splice(result.destination!.index, 0, removed);
+        setTasks(newTasks);
+    }
+
+    let displayTasks = tag ? tasks.filter(task => task.tags.includes(tag)) : tasks
+
+    const taskElements = displayTasks.map((task, index) =>
+        (<Draggable key={task.id} draggableId={`${noteId}_${task.id}`} index={index}>
+            {(provided) => (
+                <div ref={provided.innerRef}
+                     className="draggable"
+                     {...provided.draggableProps}
+                     {...provided.dragHandleProps}
+                >
+                    <TaskRow key={task.id} task={task} noteId={noteId}
+                             index={index}
+                             updateTaskCompletion={handleTaskCompletion}
+                             updateTaskText={handleTaskTextChange}
+                             handleKeyPress={handleTaskKeyPress}
+                             toggleTag={handleToggleTaskTag}
+                             autoFocus={toFocus === task.id}/>
+                </div>
+            )}
+
+        </Draggable>));
+
+    // const grid = 2;
+
+    // function getItemStyle(isDragging, draggableStyle) {
+    //     console.log(`draggableStyle: ${JSON.stringify(draggableStyle)}`);
+    //     return {
+    //         // some basic styles to make the items look a bit nicer
+    //         userSelect: "none",
+    //         padding: grid * 2,
+    //         margin: `0 0 ${grid}px 0`,
+    //
+    //         // change background colour if dragging
+    //         // background: isDragging ? "lightgreen" : "grey",
+    //
+    //         // transform: "none",
+    //
+    //         // styles we need to apply on draggables
+    //         ...draggableStyle
+    //     };
+    // }
 
     return (
         <div className="flex justify-center m-2">
@@ -142,7 +183,17 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
                                  onClick={() => handleToggleFilterTag(TAG.IMPORTANT)}/>
                 </div>
 
-                {taskElements}
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId={`droppable-${noteId}`}>
+                        {(provided) => (
+                            <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}>
+                                {taskElements}
+                                {provided.placeholder}
+                            </div>)}
+                    </Droppable>
+                </DragDropContext>
 
                 <div className="flex justify-center text-center pt-2 pb-3">
                     <ColorButton tag="Add" color={COLOR.BLUE} onClick={handleAddTask} icon={() => <AddIcon/>}/>

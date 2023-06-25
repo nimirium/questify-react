@@ -26,3 +26,8 @@ body {
   /*        rgb(var(--background-end-rgb))*/
   /*) no-repeat;*/
 }
+
+.draggable {
+  top: auto !important;
+  left: auto !important;
+}
