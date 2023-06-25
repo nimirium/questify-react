@@ -120,7 +120,7 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
     }
 
     return (
-        <div className="flex justify-center mx-2">
+        <div className="flex justify-center m-2">
             <div className="flex flex-col grow bg-amber-100 md:p-6 md:m-5 rounded-lg text-cyan-700 text-lg drop-shadow max-w-3xl">
 
                 <div>

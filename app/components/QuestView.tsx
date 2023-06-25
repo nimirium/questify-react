@@ -10,8 +10,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 export default function QuestView({noteId, tasks, setTasks, title, handleTaskCompletion, setQuestView}: NoteProps) {
-    // const [status, setStatus] = useState<TaskStatus>("error");
     const [status, setStatus] = useState<TaskStatus>("generating");
+    const [generatingQuestId, setGeneratingQuestId] = useState<string | null>(null);
     const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
     const [questlineName, setQuestlineName] = useState<string>(title);
 
@@ -28,9 +28,8 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
         localStorage.setItem(`note_${noteId}_questlineName`, questlineName);
     }, [questlineName]);
 
-    function generateQuests(tasks: Task[]) {
+    function generateQuests(tasks: Task[], updateQuestlineName: boolean, onSuccess: () => void, onError: () => void) {
         if (tasks.length > 0) {
-            setStatus("generating");
             // axios.post(`http://localhost:5000/questify`, tasks.filter(t => t.text.length > 0))
             axios.post(`https://questify-72477d5ba67d.herokuapp.com/questify`, tasks.filter(t => t.text.length > 0))
                 .then(res => {
@@ -45,15 +44,16 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
                             }
                         })
                     })
-                    setStatus("ready")
-                    setQuestlineName(res.data.questlineName)
+                    if (updateQuestlineName) 
+                        setQuestlineName(res.data.questlineName)
+                    onSuccess();
                 }).catch(err => {
                 console.error(err);
-                setStatus("error")
+                onError();
             });
             return;
         } else {
-            setStatus("ready");
+            onSuccess();
         }
 
     }
@@ -63,11 +63,37 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
             return;
         }
         const tasksWithoutQuests = questTasks.filter((task) => task.questName == null || task.questName.length === 0);
-        generateQuests(tasksWithoutQuests);
+        setStatus("generating");
+        generateQuests(tasksWithoutQuests, false, () => {
+            setStatus("ready");
+        }, () => {
+            setStatus("error");
+        })
     }, [])
 
     function regenerateAll() {
-        generateQuests(questTasks);
+        setStatus("generating");
+        generateQuests(tasks, true, () => {
+            setStatus("ready");
+        }, () => {
+            setStatus("error");
+        })
+    }
+
+    function regenerateQuest(task: Task) {
+        setGeneratingQuestId(task.id);
+        const onSuccess = () => {
+            setGeneratingQuestId(null)
+        }
+        const onError = () => {
+            setGeneratingQuestId(null)
+            setTasks(tasks.map(t => t.id === task.id ? {
+                ...t,
+                questName: t.text,
+                questDescription: 'Could not generate quest, please try again.'
+            } : t))
+        }
+        generateQuests([task], false, onSuccess, onError)
     }
 
     function handleQuestTitleClick(id: string) {
@@ -76,7 +102,7 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
 
     return (
         <>
-            <div className="flex justify-center">
+            <div className="flex justify-center m-2">
                 <div className="flex flex-col grow bg-amber-800 p-6 m-5 rounded-lg text-amber-200 text-lg drop-shadow max-w-3xl">
 
                     <NoteTitle title={questlineName} setTitle={setQuestlineName}/>
@@ -89,12 +115,15 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
 
                     {status === "ready" && questTasks.map((task, index) => {
                         return (
-                            <div key={task.id} className="my-2 border border-stone-300 rounded-lg bg-amber-700 text-amber-50">
+                            <div key={task.id}
+                                 className="my-2 border border-stone-300 rounded-lg bg-amber-700 text-amber-50">
                                 <QuestTitleRow task={task}
                                                onClick={() => handleQuestTitleClick(task.id)}
                                                handleTaskCompletion={handleTaskCompletion}/>
                                 {selectedQuest === task.id &&
-                                <QuestDescriptionRow task={task}/>}
+                                <QuestDescriptionRow task={task} generating={generatingQuestId == task.id}
+                                                     canRegenerate={generatingQuestId == null}
+                                                     regenerateQuest={regenerateQuest}/>}
                             </div>);
                     })}
 
