@@ -6,7 +6,7 @@ import {COLOR, TAG} from "../constants";
 import Checkbox from "./Checkbox";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
-export default function TaskRow({noteId, task, index, updateTaskCompletion, updateTaskText, handleKeyPress, toggleTag, autoFocus}: NoteItemProps) {
+export default function TaskRow({noteId, task, index, updateTaskCompletion, updateTaskText, handleKeyPress, toggleTag, autoFocus}: ToDoComponentProps) {
     const noteClass = classNames("m-1 px-1 grow outline-0 resize-none rounded self-center", {
         "bg-pink-300": task.completed,
         "bg-amber-100": !task.completed

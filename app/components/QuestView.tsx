@@ -9,7 +9,7 @@ import QuestDescriptionRow from "./QuestDescriptionRow";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 
-export default function QuestView({noteId, tasks, setTasks, title, handleTaskCompletion, setQuestView}: NoteProps) {
+export default function QuestView({noteId, tasks, setTasks, title, handleTaskCompletion, setQuestView}: NoteComponentProps) {
     const [status, setStatus] = useState<TaskStatus>("generating");
     const [generatingQuestId, setGeneratingQuestId] = useState<string | null>(null);
     const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
                             }
                         })
                     })
-                    if (updateQuestlineName) 
+                    if (updateQuestlineName)
                         setQuestlineName(res.data.questlineName)
                     onSuccess();
                 }).catch(err => {
@@ -113,7 +113,7 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
                         <div className="text-center">Could not generate quests, please try again.</div>
                     }
 
-                    {status === "ready" && questTasks.map((task, index) => {
+                    {status === "ready" && questTasks.map((task) => {
                         return (
                             <div key={task.id}
                                  className="my-2 border border-stone-300 rounded-lg bg-amber-700 text-amber-50">

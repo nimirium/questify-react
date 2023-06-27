@@ -3,7 +3,7 @@ type HandleTaskTextChange = (index: number, text: string) => void;
 type HandleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>, index: number) => void;
 type ToggleTag = (index: number, tag: string) => void;
 
-type NoteItemProps = {
+type ToDoComponentProps = {
     noteId: string;
     task: Task;
     index: number,
@@ -22,7 +22,7 @@ type TagButtonProps = {
     icon?: () => JSX.Element;
 }
 
-type NoteProps = {
+type NoteComponentProps = {
     noteId: string;
     tasks: Task[];
     setTasks: React.Dispatch<React.SetStateAction<Task[]>>;

@@ -9,7 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {DragDropContext, Droppable, Draggable, DropResult} from "react-beautiful-dnd";
 
-export default function NoteView({noteId, tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView, deleteNote}: NoteProps) {
+export default function NoteView({noteId, tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView, deleteNote}: NoteComponentProps) {
     const [toFocus, setToFocus] = useState<string | null>(null);
     const [tag, setTag] = useState<string | null>(null);
 
@@ -139,26 +139,6 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
             )}
 
         </Draggable>));
-
-    // const grid = 2;
-
-    // function getItemStyle(isDragging, draggableStyle) {
-    //     console.log(`draggableStyle: ${JSON.stringify(draggableStyle)}`);
-    //     return {
-    //         // some basic styles to make the items look a bit nicer
-    //         userSelect: "none",
-    //         padding: grid * 2,
-    //         margin: `0 0 ${grid}px 0`,
-    //
-    //         // change background colour if dragging
-    //         // background: isDragging ? "lightgreen" : "grey",
-    //
-    //         // transform: "none",
-    //
-    //         // styles we need to apply on draggables
-    //         ...draggableStyle
-    //     };
-    // }
 
     return (
         <div className="flex justify-center m-2">
