@@ -103,7 +103,7 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
     return (
         <>
             <div className="flex justify-center m-2">
-                <div className="flex flex-col grow bg-amber-800 p-6 m-5 rounded-lg text-amber-200 text-lg drop-shadow max-w-3xl">
+                <div className="flex flex-col grow bg-amber-800 p-6 m-5 rounded-lg text-amber-200 text-sm md:text-lg drop-shadow max-w-3xl">
 
                     <NoteTitle title={questlineName} setTitle={setQuestlineName}/>
 

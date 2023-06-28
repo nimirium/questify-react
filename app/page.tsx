@@ -10,7 +10,9 @@ export default function Home() {
                     <span>Questify To-Do</span>
                 </div>
             </div>
-            <ListOfNotesOrQuests/>
+            <div className="flex flex-col justify-center items-center">
+                <ListOfNotesOrQuests/>
+            </div>
         </main>
     )
 }

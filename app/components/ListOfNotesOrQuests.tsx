@@ -48,7 +48,7 @@ export default function ListOfNotesOrQuests() {
     return (
         <>
             {notes.map(noteId => <ToDoNoteOrQuest noteId={noteId} deleteNote={deleteNote} key={noteId}/>)}
-            <div className="flex flex-col items-center text-xl">
+            <div className="flex flex-col items-center">
                 <TagButton tag="Add note" color={COLOR.BLUE} onClick={addNote} icon={() => <AddIcon/>}/>
             </div>
         </>
