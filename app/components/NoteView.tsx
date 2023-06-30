@@ -9,41 +9,29 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {DragDropContext, Droppable, Draggable, DropResult} from "react-beautiful-dnd";
 
-export default function NoteView({noteId, tasks, setTasks, title, setTitle, handleTaskCompletion, setQuestView, deleteNote}: NoteComponentProps) {
+export default function NoteView({note, dispatch, setQuestView}: NoteComponentProps) {
     const [toFocus, setToFocus] = useState<string | null>(null);
     const [tag, setTag] = useState<string | null>(null);
+    const tasks = note.tasks;
 
     useEffect(() => {
         if (toFocus != null) {
-            const input: HTMLInputElement = document.getElementById(`input_${noteId}_${toFocus}`) as HTMLInputElement;
+            const input: HTMLInputElement = document.getElementById(`input_${note.id}_${toFocus}`) as HTMLInputElement;
             if (input) {
                 input.focus();
                 input.selectionStart = input.selectionEnd = input.value.length;  // keep the cursor at the end of the text
             }
             setToFocus(null);
         }
-    }, [toFocus, noteId]);
+    }, [toFocus]);
 
     const handleTaskTextChange: HandleTaskTextChange = (index, text) => {
         if ('\n' === text.slice(-1)) {
             const newId = (tasks.reduce((maxId, task) => Math.max(Number(task.id), maxId), -1) + 1).toString();
-            setTasks((tasks) => {
-                const newTasks = [...tasks];
-                newTasks.splice(index + 1, 0, {
-                    id: newId,
-                    text: "",
-                    completed: false,
-                    tags: [],
-                    questName: "",
-                    questDescription: "",
-                });
-                return newTasks;
-            });
+            dispatch({type: 'addTask', noteId: note.id, index: index});
             setToFocus(newId);
         } else {
-            setTasks((tasks) => tasks.map((task, i) => {
-                return i === index ? {...task, text, questName: "", questDescription: ""} : task;
-            }));
+            dispatch({type: 'changeTaskText', noteId: note.id, index: index, text: text});
         }
     }
 
@@ -51,25 +39,12 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
         if (e.key == "Backspace" && index > 0 && tasks[index].text === "" && tasks.length > 0) {
             e.preventDefault();
             setToFocus(tasks[index - 1].id);
-            setTasks((tasks) => {
-                const newTasks = [...tasks];
-                newTasks.splice(index, 1);
-                return newTasks;
-            });
+            dispatch({type: 'deleteTask', noteId: note.id, index: index});
         }
     }
 
     function handleToggleTaskTag(taskIndex: number, tag: string) {
-        setTasks((tasks) => tasks.map((task, i) => {
-            if (i === taskIndex) {
-                if (task.tags.includes(tag)) {
-                    return {... task, tags: task.tags.filter(t => t !== tag)};
-                } else {
-                    return {... task, tags: [...task.tags, tag]};
-                }
-            }
-            return task;
-        }));
+        dispatch({type: 'toggleTaskTag', noteId: note.id, index: taskIndex, tag: tag});
     }
 
     function handleToggleFilterTag(newTag: TAG) {
@@ -82,55 +57,40 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
 
     function handleAddTask() {
         const newId = (tasks.reduce((maxId, task) => Math.max(Number(task.id), maxId), -1) + 1).toString();
-        setTasks((notes) => [...notes, {
-            id: newId,
-            text: "",
-            completed: false,
-            tags: [],
-            questName: "",
-            questDescription: "",
-        }]);
+        dispatch({type: 'addTask', noteId: note.id, index: tasks.length - 1, newId: newId});
         setToFocus(newId);
     }
 
     function onAutoSortTasks() {
-        setTasks((tasks) => [...tasks].sort((a, b) => {
-            const aScore: number = a.tags.reduce((score, tag) => tagScores[tag] ? score + tagScores[tag] : 0, 0);
-            const bScore: number = b.tags.reduce((score, tag) => tagScores[tag] ? score + tagScores[tag] : 0, 0);
-
-            // If both tasks are completed or uncompleted, sort by score.
-            if ((a.completed && b.completed) || (!a.completed && !b.completed)) {
-                return bScore - aScore;
-            }
-
-            // If only one task is completed, that task goes last.
-            return a.completed ? 1 : -1;
-        }));
+        dispatch({type: 'autoSortTasks', noteId: note.id});
     }
 
     function handleDragEnd(result: DropResult) {
         if (!result.destination || result.source.index === result.destination?.index) {
             return;
         }
-        const newTasks = [...tasks];
-        const [removed] = newTasks.splice(result.source.index, 1);
-        newTasks.splice(result.destination!.index, 0, removed);
-        setTasks(newTasks);
+        dispatch({type: 'changeTaskOrder', noteId: note.id, index: result.source.index, dstIndex: result.destination!.index});
+        console.log(`Dragged ${result.source.index} to ${result.destination!.index}`);
     }
 
     let displayTasks = tag ? tasks.filter(task => task.tags.includes(tag)) : tasks
 
     const taskElements = displayTasks.map((task, index) =>
-        (<Draggable key={task.id} draggableId={`${noteId}_${task.id}`} index={index}>
+        (<Draggable key={task.id} draggableId={`${note.id}_${task.id}`} index={index}>
             {(provided) => (
                 <div ref={provided.innerRef}
                      className="draggable"
                      {...provided.draggableProps}
                      {...provided.dragHandleProps}
                 >
-                    <TaskRow key={task.id} task={task} noteId={noteId}
+                    <TaskRow key={task.id} task={task} noteId={note.id}
                              index={index}
-                             updateTaskCompletion={handleTaskCompletion}
+                             updateTaskCompletion={() => dispatch({
+                                 type: 'changeTaskCompletion',
+                                 noteId: note.id,
+                                 taskId: task.id,
+                                 completed: !task.completed
+                             })}
                              updateTaskText={handleTaskTextChange}
                              handleKeyPress={handleTaskKeyPress}
                              toggleTag={handleToggleTaskTag}
@@ -146,10 +106,11 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
 
                 <div>
                     <SortIcon className="float-left m-3" onClick={onAutoSortTasks}/>
-                    <DeleteForeverIcon className="float-right m-3" onClick={() => deleteNote(noteId)}/>
+                    <DeleteForeverIcon className="float-right m-3"
+                                       onClick={() => dispatch({type: 'deleteNote', noteId: note.id})}/>
                 </div>
 
-                <NoteTitle title={title} setTitle={setTitle}/>
+                <NoteTitle title={note.title} setTitle={(t) => dispatch({type: 'setNoteTitle', noteId: note.id, title: t})}/>
 
                 <div className="flex justify-center text-center pt-2 pb-3 text-sm">
                     <ColorButton tag={TAG.TWO_MINUTES}
@@ -164,7 +125,7 @@ export default function NoteView({noteId, tasks, setTasks, title, setTitle, hand
                 </div>
 
                 <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable droppableId={`droppable-${noteId}`}>
+                    <Droppable droppableId={`droppable-${note.id}`}>
                         {(provided) => (
                             <div
                                 ref={provided.innerRef}

@@ -9,43 +9,23 @@ import QuestDescriptionRow from "./QuestDescriptionRow";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 
-export default function QuestView({noteId, tasks, setTasks, title, handleTaskCompletion, setQuestView}: NoteComponentProps) {
+export default function QuestView({note, dispatch, setQuestView}: NoteComponentProps) {
     const [status, setStatus] = useState<TaskStatus>("generating");
     const [generatingQuestId, setGeneratingQuestId] = useState<string | null>(null);
     const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
-    const [questlineName, setQuestlineName] = useState<string>(title);
+    // const [questlineName, setQuestlineName] = useState<string>(title);
 
+    const tasks = note.tasks;
     const questTasks = tasks.filter(t => t.text.length > 0);
-
-    useEffect(() => {
-        const initialQuestlineName = localStorage.getItem(`note_${noteId}_questlineName`) ?? '';
-        if (initialQuestlineName != null) {
-            setQuestlineName(initialQuestlineName);
-        }
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem(`note_${noteId}_questlineName`, questlineName);
-    }, [questlineName]);
 
     function generateQuests(tasks: Task[], updateQuestlineName: boolean, onSuccess: () => void, onError: () => void) {
         if (tasks.length > 0) {
             // axios.post(`http://localhost:5000/questify`, tasks.filter(t => t.text.length > 0))
             axios.post(`https://questify-72477d5ba67d.herokuapp.com/questify`, tasks.filter(t => t.text.length > 0))
                 .then(res => {
-                    const quests = res.data.quests;
-                    setTasks(tasks => {
-                        return [...tasks].map(t => {
-                            const quest = quests[t.id];
-                            if (quest) {
-                                return {...t, questName: quest.questName, questDescription: quest.questDescription};
-                            } else {
-                                return t;
-                            }
-                        })
-                    })
+                    dispatch({type: "changeQuests", noteId: note.id, quests: res.data.quests})
                     if (updateQuestlineName)
-                        setQuestlineName(res.data.questlineName)
+                        dispatch({type: "setQuestlineName", noteId: note.id, questlineName: res.data.questlineName})
                     onSuccess();
                 }).catch(err => {
                 console.error(err);
@@ -64,7 +44,7 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
         }
         const tasksWithoutQuests = questTasks.filter((task) => task.questName == null || task.questName.length === 0);
         setStatus("generating");
-        generateQuests(tasksWithoutQuests, false, () => {
+        generateQuests(tasksWithoutQuests, true, () => {
             setStatus("ready");
         }, () => {
             setStatus("error");
@@ -87,11 +67,11 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
         }
         const onError = () => {
             setGeneratingQuestId(null)
-            setTasks(tasks.map(t => t.id === task.id ? {
-                ...t,
-                questName: t.text,
-                questDescription: 'Could not generate quest, please try again.'
-            } : t))
+            dispatch({
+                type: "changeQuests",
+                noteId: note.id,
+                quests: {[task.id]: {questName: task.text, questDescription: 'Could not generate quest, please try again.'}}
+            })
         }
         generateQuests([task], false, onSuccess, onError)
     }
@@ -105,7 +85,11 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
             <div className="flex justify-center m-2">
                 <div className="flex flex-col grow bg-amber-800 p-6 m-5 rounded-lg text-amber-200 text-sm md:text-lg drop-shadow max-w-3xl">
 
-                    <NoteTitle title={questlineName} setTitle={setQuestlineName}/>
+                    <NoteTitle title={note.questlineName} setTitle={(qln) => dispatch({
+                        type: 'setQuestlineName',
+                        noteId: note.id,
+                        questlineName: qln
+                    })}/>
 
                     {status === "generating" && <LoadingIndicator text={"Generating quests..."}/>}
 
@@ -119,7 +103,12 @@ export default function QuestView({noteId, tasks, setTasks, title, handleTaskCom
                                  className="my-2 border border-stone-300 rounded-lg bg-amber-700 text-amber-50">
                                 <QuestTitleRow task={task}
                                                onClick={() => handleQuestTitleClick(task.id)}
-                                               handleTaskCompletion={handleTaskCompletion}/>
+                                               handleTaskCompletion={(id, c) => dispatch({
+                                                   type: "changeTaskCompletion",
+                                                   noteId: note.id,
+                                                   taskId: task.id,
+                                                   completed: c,
+                                               })}/>
                                 {selectedQuest === task.id &&
                                 <QuestDescriptionRow task={task} generating={generatingQuestId == task.id}
                                                      canRegenerate={generatingQuestId == null}

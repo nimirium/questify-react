@@ -1,19 +1,23 @@
+import {Reducer, useEffect, useReducer} from "react";
 import ToDoNoteOrQuest from "./ToDoNoteOrQuest";
-import {useEffect, useState} from "react";
 import TagButton from "./TagButton";
-import {COLOR} from "../constants";
 import AddIcon from "@mui/icons-material/Add";
+import {notesReducer} from "../reducers/NotesReducer";
+import {COLOR,} from "../constants";
+import {emptyNote} from "../fixtures/NoteFixture"
+
 
 export default function ListOfNotesOrQuests() {
-    const [notes, setNotes] = useState<string[]>([]);
-    const [deletedNote, setDeletedNote] = useState<string | null>(null);
+
+    const [notes, dispatch] = useReducer<Reducer<Note[], NoteAction>, Note[]>(notesReducer, [emptyNote], () => [emptyNote]);
 
     useEffect(() => {
         const initialNotes = localStorage.getItem('notes');
+        console.log(`initialNotes: ${initialNotes}`)
         if (initialNotes != null && initialNotes.length > 0) {
-            setNotes(JSON.parse(initialNotes));
+            dispatch({type: 'setNotes', notes: JSON.parse(initialNotes)});
         } else {
-            setNotes(["1"]);
+            dispatch({type: 'setNotes', notes: [{...emptyNote}]});
         }
     }, []);
 
@@ -21,35 +25,26 @@ export default function ListOfNotesOrQuests() {
         localStorage.setItem('notes', JSON.stringify(notes));
     }, [notes]);
 
-    useEffect(() => {
-        if (deletedNote != null) {
-            localStorage.removeItem(`note_${deletedNote}_tasks`);
-            localStorage.removeItem(`note_${deletedNote}_title`);
-            localStorage.removeItem(`note_${deletedNote}_questlineName`);
-            setDeletedNote(null);
-        }
-    }, [deletedNote]);
-
-
-
-    function addNote() {
-        const nextId = notes.reduce((maxId, id) => Math.max(maxId, parseInt(id)), 0) + 1;
-        setNotes([...notes, nextId.toString()]);
-    }
-
     function deleteNote(noteId: string) {
         if (confirm('Are you sure you want to delete this note?')) {
-            setNotes(notes.filter(id => noteId !== id));
-            setDeletedNote(noteId);
+            dispatch({type: 'deleteNote', noteId: noteId})
         }
     }
 
+    function setNoteTitle(noteId: string, newTitle: string) {
+        dispatch({type: 'setNoteTitle', noteId: noteId, title: newTitle})
+    }
+
+    console.log(`notes: ${JSON.stringify(notes)}`)
 
     return (
         <>
-            {notes.map(noteId => <ToDoNoteOrQuest noteId={noteId} deleteNote={deleteNote} key={noteId}/>)}
+            {notes.map(note => <ToDoNoteOrQuest note={note}
+                                                dispatch={dispatch}
+                                                key={note.id}
+            />)}
             <div className="flex flex-col items-center">
-                <TagButton tag="Add note" color={COLOR.BLUE} onClick={addNote} icon={() => <AddIcon/>}/>
+                <TagButton tag="Add note" color={COLOR.BLUE} onClick={() => dispatch({type: 'addNote'})} icon={() => <AddIcon/>}/>
             </div>
         </>
     )
