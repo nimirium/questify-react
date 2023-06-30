@@ -109,7 +109,9 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
                                        onClick={() => dispatch({type: 'deleteNote', noteId: note.id})}/>
                 </div>
 
-                <NoteTitle title={note.title} setTitle={(t) => dispatch({type: 'setNoteTitle', noteId: note.id, title: t})}/>
+                <NoteTitle title={note.title}
+                    placeholder="[ Note title ]"
+                    setTitle={(t) => dispatch({type: 'setNoteTitle', noteId: note.id, title: t})}/>
 
                 <div className="flex justify-center text-center pt-2 pb-3 text-sm">
                     <ColorButton tag={TAG.TWO_MINUTES}

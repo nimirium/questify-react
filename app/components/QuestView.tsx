@@ -84,11 +84,13 @@ export default function QuestView({note, dispatch, setQuestView}: NoteComponentP
             <div className="flex justify-center m-2 w-5/6 sm:w-3/4 md:2/3">
                 <div className="flex flex-col grow bg-amber-800 p-6 m-5 rounded-lg text-amber-200 text-sm md:text-lg drop-shadow max-w-3xl">
 
-                    <NoteTitle title={note.questlineName} setTitle={(qln) => dispatch({
-                        type: 'setQuestlineName',
-                        noteId: note.id,
-                        questlineName: qln
-                    })}/>
+                    <NoteTitle title={note.questlineName}
+                        placeholder="[ Questline name ]"
+                        setTitle={(qln) => dispatch({
+                            type: 'setQuestlineName',
+                            noteId: note.id,
+                            questlineName: qln,
+                        })} />
 
                     {status === "generating" && <LoadingIndicator text={"Generating quests..."}/>}
 
