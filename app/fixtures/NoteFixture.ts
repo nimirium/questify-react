@@ -1,15 +1,19 @@
-export const emptyTask: Task = {
-    id: '1',
-    text: '',
-    completed: false,
-    tags: [],
-    questName: '',
-    questDescription: '',
-};
+export function emptyTask() {
+    return {
+        id: '1',
+        text: '',
+        completed: false,
+        tags: [],
+        questName: '',
+        questDescription: '',
+    };
+}
 
-export const emptyNote: Note = {
-    id: '1',
-    tasks: [{...emptyTask}],
-    title: '',
-    questlineName: ''
+export function emptyNote() {
+    return {
+        id: '1',
+        tasks: [emptyTask()],
+        title: '',
+        questlineName: ''
+    };
 }

@@ -9,7 +9,7 @@ import {emptyNote} from "../fixtures/NoteFixture"
 
 export default function ListOfNotesOrQuests() {
 
-    const [notes, dispatch] = useReducer<Reducer<Note[], NoteAction>, Note[]>(notesReducer, [emptyNote], () => [emptyNote]);
+    const [notes, dispatch] = useReducer(notesReducer, [emptyNote()]);
 
     useEffect(() => {
         const initialNotes = localStorage.getItem('notes');
@@ -17,7 +17,7 @@ export default function ListOfNotesOrQuests() {
         if (initialNotes != null && initialNotes.length > 0) {
             dispatch({type: 'setNotes', notes: JSON.parse(initialNotes)});
         } else {
-            dispatch({type: 'setNotes', notes: [{...emptyNote}]});
+            dispatch({type: 'setNotes', notes: [emptyNote()]});
         }
     }, []);
 

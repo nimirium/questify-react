@@ -8,8 +8,8 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
             return action.notes;
         case 'addNote':
             const nextId = Object.keys(prevState).reduce((maxId, noteId) => Math.max(maxId, parseInt(noteId)), 0) + 1;
-            const nextNote: Note = {...emptyNote, id: nextId.toString()};
-            return {...prevState, [nextId]: nextNote};
+            const nextNote: Note = {...emptyNote(), id: nextId.toString()};
+            return [...prevState, nextNote];
         case 'deleteNote':
             if (confirm('Are you sure you want to delete this note?')) {
                 return prevState.filter(note => action.noteId !== note.id);
@@ -37,7 +37,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                 if (note.id === action.noteId) {
                     const nextId = action.newId || note.tasks.reduce((maxId, task) => Math.max(maxId, parseInt(task.id)), 0) + 1;
                     const nextTasks = [...note.tasks];
-                    nextTasks.splice(action.index + 1, 0, {...emptyTask, id: nextId.toString()});
+                    nextTasks.splice(action.index + 1, 0, {...emptyTask(), id: nextId.toString()});
                     return {...note, tasks: nextTasks};
                 } else {
                     return note;

@@ -28,7 +28,7 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
     const handleTaskTextChange: HandleTaskTextChange = (index, text) => {
         if ('\n' === text.slice(-1)) {
             const newId = (tasks.reduce((maxId, task) => Math.max(Number(task.id), maxId), -1) + 1).toString();
-            dispatch({type: 'addTask', noteId: note.id, index: index});
+            dispatch({type: 'addTask', noteId: note.id, index: index, tags: tag != null ? [tag] : []});
             setToFocus(newId);
         } else {
             dispatch({type: 'changeTaskText', noteId: note.id, index: index, text: text});
@@ -57,7 +57,7 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
 
     function handleAddTask() {
         const newId = (tasks.reduce((maxId, task) => Math.max(Number(task.id), maxId), -1) + 1).toString();
-        dispatch({type: 'addTask', noteId: note.id, index: tasks.length - 1, newId: newId});
+        dispatch({ type: 'addTask', noteId: note.id, index: tasks.length - 1, newId: newId, tags: tag != null ? [tag] : [] });
         setToFocus(newId);
     }
 
