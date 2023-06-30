@@ -100,7 +100,7 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
         </Draggable>));
 
     return (
-        <div className="flex justify-center m-2 w-5/6 sm:w-3/4 md:2/3">
+        <div className="flex justify-center m-2 w-11/12 sm:w-5/6 md:2/3">
             <div className="flex flex-col grow bg-amber-100 md:p-6 md:m-5 rounded-lg text-cyan-700 text-md sm:text-lg drop-shadow max-w-3xl">
 
                 <div>
