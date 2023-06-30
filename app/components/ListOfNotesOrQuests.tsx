@@ -5,6 +5,7 @@ import AddIcon from "@mui/icons-material/Add";
 import {notesReducer} from "../reducers/NotesReducer";
 import {COLOR,} from "../constants";
 import {emptyNote} from "../fixtures/NoteFixture"
+import { appVersion } from "../fixtures/Version";
 
 
 export default function ListOfNotesOrQuests() {
@@ -12,6 +13,11 @@ export default function ListOfNotesOrQuests() {
     const [notes, dispatch] = useReducer(notesReducer, [emptyNote()]);
 
     useEffect(() => {
+        const version = localStorage.getItem('questifyVersion');
+        if (version == null || version !== appVersion) {
+            localStorage.clear();
+            localStorage.setItem('questifyVersion', appVersion);
+        }
         const initialNotes = localStorage.getItem('notes');
         if (initialNotes != null && initialNotes.length > 0) {
             dispatch({type: 'setNotes', notes: JSON.parse(initialNotes)});
