@@ -7,7 +7,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
         case 'setNotes':
             return action.notes;
         case 'addNote':
-            const nextId = Object.keys(prevState).reduce((maxId, noteId) => Math.max(maxId, parseInt(noteId)), 0) + 1;
+            const nextId = prevState.reduce((maxId, note) => Math.max(maxId, parseInt(note.id)), 0) + 1;
             const nextNote: Note = {...emptyNote(), id: nextId.toString()};
             return [...prevState, nextNote];
         case 'deleteNote':

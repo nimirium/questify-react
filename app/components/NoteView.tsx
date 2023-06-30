@@ -70,7 +70,6 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
             return;
         }
         dispatch({type: 'changeTaskOrder', noteId: note.id, index: result.source.index, dstIndex: result.destination!.index});
-        console.log(`Dragged ${result.source.index} to ${result.destination!.index}`);
     }
 
     let displayTasks = tag ? tasks.filter(task => task.tags.includes(tag)) : tasks

@@ -13,7 +13,6 @@ export default function QuestView({note, dispatch, setQuestView}: NoteComponentP
     const [status, setStatus] = useState<TaskStatus>("generating");
     const [generatingQuestId, setGeneratingQuestId] = useState<string | null>(null);
     const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
-    // const [questlineName, setQuestlineName] = useState<string>(title);
 
     const tasks = note.tasks;
     const questTasks = tasks.filter(t => t.text.length > 0);
@@ -82,7 +81,7 @@ export default function QuestView({note, dispatch, setQuestView}: NoteComponentP
 
     return (
         <>
-            <div className="flex justify-center m-2">
+            <div className="flex justify-center m-2 w-5/6 sm:w-3/4 md:2/3">
                 <div className="flex flex-col grow bg-amber-800 p-6 m-5 rounded-lg text-amber-200 text-sm md:text-lg drop-shadow max-w-3xl">
 
                     <NoteTitle title={note.questlineName} setTitle={(qln) => dispatch({

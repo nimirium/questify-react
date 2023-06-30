@@ -13,7 +13,6 @@ export default function ListOfNotesOrQuests() {
 
     useEffect(() => {
         const initialNotes = localStorage.getItem('notes');
-        console.log(`initialNotes: ${initialNotes}`)
         if (initialNotes != null && initialNotes.length > 0) {
             dispatch({type: 'setNotes', notes: JSON.parse(initialNotes)});
         } else {
@@ -34,8 +33,6 @@ export default function ListOfNotesOrQuests() {
     function setNoteTitle(noteId: string, newTitle: string) {
         dispatch({type: 'setNoteTitle', noteId: noteId, title: newTitle})
     }
-
-    console.log(`notes: ${JSON.stringify(notes)}`)
 
     return (
         <>
