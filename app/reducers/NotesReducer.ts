@@ -1,5 +1,5 @@
-import {tagScores} from "../constants";
-import {emptyNote, emptyTask} from "../fixtures/NoteFixture";
+import { tagScores } from "../constants";
+import { emptyNote, emptyTask } from "../fixtures/NoteFixture";
 
 export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
     switch (action.type) {
@@ -8,7 +8,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
             return action.notes;
         case 'addNote':
             const nextId = prevState.reduce((maxId, note) => Math.max(maxId, parseInt(note.id)), 0) + 1;
-            const nextNote: Note = {...emptyNote(), id: nextId.toString()};
+            const nextNote: Note = { ...emptyNote(), id: nextId.toString() };
             return [...prevState, nextNote];
         case 'deleteNote':
             if (confirm('Are you sure you want to delete this note?')) {
@@ -18,7 +18,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
         case 'setNoteTitle':
             return prevState.map(note => {
                 if (note.id === action.noteId && action.title != null) {
-                    return {...note, title: action.title};
+                    return { ...note, title: action.title };
                 } else {
                     return note;
                 }
@@ -26,7 +26,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
         case 'setQuestlineName':
             return prevState.map(note => {
                 if (note.id === action.noteId && action.questlineName != null) {
-                    return {...note, questlineName: action.questlineName};
+                    return { ...note, questlineName: action.questlineName };
                 } else {
                     return note;
                 }
@@ -37,8 +37,8 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                 if (note.id === action.noteId) {
                     const nextId = action.newId || note.tasks.reduce((maxId, task) => Math.max(maxId, parseInt(task.id)), 0) + 1;
                     const nextTasks = [...note.tasks];
-                    nextTasks.splice(action.index + 1, 0, {...emptyTask(), id: nextId.toString()});
-                    return {...note, tasks: nextTasks};
+                    nextTasks.splice(action.index + 1, 0, { ...emptyTask(), id: nextId.toString() });
+                    return { ...note, tasks: nextTasks };
                 } else {
                     return note;
                 }
@@ -48,7 +48,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                 if (note.id === action.noteId) {
                     const newTasks = [...note.tasks];
                     newTasks.splice(action.index, 1);
-                    return {...note, tasks: newTasks};
+                    return { ...note, tasks: newTasks };
                 } else {
                     return note;
                 }
@@ -60,7 +60,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                     newTasks[action.index].text = action.text;
                     newTasks[action.index].questName = '';
                     newTasks[action.index].questDescription = '';
-                    return {...note, tasks: newTasks};
+                    return { ...note, tasks: newTasks };
                 } else {
                     return note;
                 }
@@ -74,7 +74,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                     } else {
                         newTasks[action.index].tags.push(action.tag);
                     }
-                    return {...note, tasks: newTasks};
+                    return { ...note, tasks: newTasks };
                 } else {
                     return note;
                 }
@@ -85,12 +85,12 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                     const newTasks = [...note.tasks].map(t => {
                         const quest = action.quests[t.id];
                         if (quest) {
-                            return {...t, questName: quest.questName, questDescription: quest.questDescription};
+                            return { ...t, questName: quest.questName, questDescription: quest.questDescription };
                         } else {
                             return t;
                         }
                     });
-                    return {...note, tasks: newTasks}
+                    return { ...note, tasks: newTasks }
                 } else {
                     return note;
                 }
@@ -102,9 +102,9 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                         ...note,
                         tasks: note.tasks.map(t => {
                             if (t.id == action.taskId) {
-                                return {...t, completed: action.completed}
+                                return { ...t, completed: action.completed }
                             }
-                            return {...t}
+                            return { ...t }
                         })
                     };
                 } else {
@@ -117,7 +117,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                     const newTasks = [...note.tasks];
                     const task = newTasks.splice(action.index, 1)[0];
                     newTasks.splice(action.dstIndex, 0, task);
-                    return {...note, tasks: newTasks};
+                    return { ...note, tasks: newTasks };
                 } else {
                     return note;
                 }
@@ -138,7 +138,7 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                         // If only one task is completed, that task goes last.
                         return a.completed ? 1 : -1;
                     })
-                    return {...note, tasks: newTasks};
+                    return { ...note, tasks: newTasks };
                 } else {
                     return note;
                 }

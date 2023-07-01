@@ -5,7 +5,7 @@ export default function Checkbox({checked, onClick, className}: { checked: boole
             className={`form-checkbox h-6 w-6 text-cyan-600 m-1 self-center ${className}`}
             checked={checked}
             onClick={onClick}
-            onChange={() => {}}
+            onChange={() => {} /* This is needed to prevent a warning */}
         />
     )
 }

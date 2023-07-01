@@ -1,6 +1,6 @@
-import {Reducer, useEffect, useReducer} from "react";
+import {useEffect, useReducer} from "react";
 import ToDoNoteOrQuest from "./ToDoNoteOrQuest";
-import TagButton from "./TagButton";
+import Button from "./ui/Button";
 import AddIcon from "@mui/icons-material/Add";
 import {notesReducer} from "../reducers/NotesReducer";
 import {COLOR,} from "../constants";
@@ -30,24 +30,14 @@ export default function ListOfNotesOrQuests() {
         localStorage.setItem('notes', JSON.stringify(notes));
     }, [notes]);
 
-    function deleteNote(noteId: string) {
-        if (confirm('Are you sure you want to delete this note?')) {
-            dispatch({type: 'deleteNote', noteId: noteId})
-        }
-    }
-
-    function setNoteTitle(noteId: string, newTitle: string) {
-        dispatch({type: 'setNoteTitle', noteId: noteId, title: newTitle})
-    }
 
     return (
         <>
-            {notes.map(note => <ToDoNoteOrQuest note={note}
-                                                dispatch={dispatch}
-                                                key={note.id}
-            />)}
+            {notes.map(note => <ToDoNoteOrQuest note={note} dispatch={dispatch} key={note.id} />)}
             <div className="flex flex-col items-center">
-                <TagButton tag="Add note" color={COLOR.BLUE} onClick={() => dispatch({type: 'addNote'})} icon={() => <AddIcon/>}/>
+                <Button text="Add note" color={COLOR.BLUE} icon={() => <AddIcon />}
+                           onClick={() => dispatch({ type: 'addNote' })}
+                />
             </div>
         </>
     )

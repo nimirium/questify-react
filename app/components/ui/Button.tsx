@@ -1,6 +1,14 @@
 import React from "react";
 
-export default function TagButton({tag, tinyTag, color, onClick, icon}: TagButtonProps) {
+type ButtonProps = {
+    text: string;
+    tinyTag?: string;
+    color: string;
+    onClick: () => void;
+    icon?: () => JSX.Element;
+}
+
+export default function Button({text: tag, tinyTag, color, onClick, icon}: ButtonProps) {
     return (
         <>
             <button className={"px-2 py-1 m-1 rounded shadow-md " + color + (tinyTag ? " hidden lg:block" : " ")}

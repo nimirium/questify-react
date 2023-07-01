@@ -1,7 +1,7 @@
 import TaskRow from "./TaskRow";
 import {useEffect, useState} from "react";
-import ColorButton from "./TagButton";
-import {COLOR, TAG, tagScores} from "../constants";
+import Button from "../ui/Button";
+import {COLOR, TAG, tagScores} from "../../constants";
 import SortIcon from '@mui/icons-material/Sort';
 import NoteTitle from "./NoteTitle";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
@@ -61,10 +61,6 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
         setToFocus(newId);
     }
 
-    function onAutoSortTasks() {
-        dispatch({type: 'autoSortTasks', noteId: note.id});
-    }
-
     function handleDragEnd(result: DropResult) {
         if (!result.destination || result.source.index === result.destination?.index) {
             return;
@@ -104,7 +100,8 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
             <div className="flex flex-col grow bg-amber-100 md:p-6 md:m-5 rounded-lg text-cyan-700 text-md sm:text-lg drop-shadow max-w-3xl">
 
                 <div>
-                    <SortIcon className="float-left m-3" onClick={onAutoSortTasks}/>
+                    <SortIcon className="float-left m-3"
+                              onClick={() => dispatch({type: 'autoSortTasks', noteId: note.id})}/>
                     <DeleteForeverIcon className="float-right m-3"
                                        onClick={() => dispatch({type: 'deleteNote', noteId: note.id})}/>
                 </div>
@@ -114,13 +111,13 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
                     setTitle={(t) => dispatch({type: 'setNoteTitle', noteId: note.id, title: t})}/>
 
                 <div className="flex justify-center text-center pt-2 pb-3 text-sm">
-                    <ColorButton tag={TAG.TWO_MINUTES}
+                    <Button text={TAG.TWO_MINUTES}
                                  color={tag == null || tag === TAG.TWO_MINUTES ? COLOR.GREEN : COLOR.GRAY}
                                  onClick={() => handleToggleFilterTag(TAG.TWO_MINUTES)}/>
-                    <ColorButton tag={TAG.URGENT}
+                    <Button text={TAG.URGENT}
                                  color={tag == null || tag === TAG.URGENT ? COLOR.ORANGE : COLOR.GRAY}
                                  onClick={() => handleToggleFilterTag(TAG.URGENT)}/>
-                    <ColorButton tag={TAG.IMPORTANT}
+                    <Button text={TAG.IMPORTANT}
                                  color={tag == null || tag === TAG.IMPORTANT ? COLOR.YELLOW : COLOR.GRAY}
                                  onClick={() => handleToggleFilterTag(TAG.IMPORTANT)}/>
                 </div>
@@ -138,9 +135,9 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
                 </DragDropContext>
 
                 <div className="flex justify-center text-center pt-2 pb-3">
-                    <ColorButton tag="Add" color={COLOR.BLUE} onClick={handleAddTask} icon={() => <AddIcon/>}/>
-                    <ColorButton tag="Questify" color={COLOR.VIOLET} onClick={() => setQuestView(true)}
-                                 icon={() => <AutoFixHighIcon/>}/>
+                    <Button text="Add" color={COLOR.BLUE} icon={() => <AddIcon/>} onClick={handleAddTask}/>
+                    <Button text="Questify" color={COLOR.VIOLET} icon={() => <AutoFixHighIcon/>}
+                                 onClick={() => setQuestView(true)}/>
                 </div>
 
             </div>
