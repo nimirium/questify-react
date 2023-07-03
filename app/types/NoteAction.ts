@@ -12,4 +12,5 @@ type NoteAction =
     {type: "changeQuests", noteId: string, quests: { [id: string]: { questName: string, questDescription: string } }} |
     {type: "changeTaskCompletion", noteId: string, taskId: string, completed: boolean} |
     {type: "changeTaskOrder", noteId: string, index: number, dstIndex: number} |
-    {type: "autoSortTasks", noteId: string};
+    {type: "autoSortTasks", noteId: string} |
+    {type: "clearCompleted", noteId: string};

@@ -7,7 +7,9 @@ import NoteTitle from "./NoteTitle";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import ClearIcon from '@mui/icons-material/Clear';
 import {DragDropContext, Droppable, Draggable, DropResult} from "react-beautiful-dnd";
+
 
 export default function NoteView({note, dispatch, setQuestView}: NoteComponentProps) {
     const [toFocus, setToFocus] = useState<string | null>(null);
@@ -134,10 +136,15 @@ export default function NoteView({note, dispatch, setQuestView}: NoteComponentPr
                     </Droppable>
                 </DragDropContext>
 
+                <div className="flex justify-center text-center pt-2 pb-3 text-sm">
+                    <Button text="Add Task" color={COLOR.BLUE} icon={() => <AddIcon/>} onClick={handleAddTask}/>
+                    <Button text="Clear Completed" color={COLOR.BLUE} icon={() => <ClearIcon/>}
+                        onClick={() => dispatch({type: 'clearCompleted', noteId: note.id})}/>
+                </div>
+
                 <div className="flex justify-center text-center pt-2 pb-3">
-                    <Button text="Add" color={COLOR.BLUE} icon={() => <AddIcon/>} onClick={handleAddTask}/>
                     <Button text="Questify" color={COLOR.VIOLET} icon={() => <AutoFixHighIcon/>}
-                                 onClick={() => setQuestView(true)}/>
+                            onClick={() => setQuestView(true)}/>
                 </div>
 
             </div>

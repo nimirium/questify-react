@@ -37,7 +37,8 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                 if (note.id === action.noteId) {
                     const nextId = action.newId || note.tasks.reduce((maxId, task) => Math.max(maxId, parseInt(task.id)), 0) + 1;
                     const nextTasks = [...note.tasks];
-                    nextTasks.splice(action.index + 1, 0, { ...emptyTask(), id: nextId.toString() });
+                    const newTask = { ...emptyTask(), id: nextId.toString(), tags: action.tags }
+                    nextTasks.splice(action.index + 1, 0, newTask);
                     return { ...note, tasks: nextTasks };
                 } else {
                     return note;
@@ -143,6 +144,18 @@ export const notesReducer = (prevState: Note[], action: NoteAction): Note[] => {
                     return note;
                 }
             })
+        case 'clearCompleted':
+            if (confirm('Are you sure you want to delete completed tasks?')) {
+                return prevState.map(note => {
+                    if (note.id === action.noteId) {
+                        return { ...note, tasks: note.tasks.filter(t => !t.completed) };
+                    } else {
+                        return note;
+                    }
+                })
+            } else {
+                return prevState;
+            }
         default:
             console.error(`Unknown action: ${JSON.stringify(action)}`);
             return prevState;
