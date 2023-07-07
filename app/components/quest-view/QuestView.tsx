@@ -19,8 +19,15 @@ export default function QuestView({ note, dispatch, setQuestView }: NoteComponen
 
     function generateQuests(tasks: Task[], updateQuestlineName: boolean, onSuccess: () => void, onError: () => void) {
         if (tasks.length > 0) {
-            // axios.post(`http://localhost:5000/questify`, tasks.filter(t => t.text.length > 0))
-            axios.post(`https://questify-72477d5ba67d.herokuapp.com/questify`, tasks.filter(t => t.text.length > 0))
+            // axios.post(`http://localhost:5000/questify`, ...)
+            const payload = {
+                tasks: tasks.filter(t => t.text.length > 0),
+                context: {
+                    title: note.title,
+                    time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+                }
+            }
+            axios.post(`https://questify-72477d5ba67d.herokuapp.com/v2/questify`, payload)
                 .then(res => {
                     dispatch({ type: "changeQuests", noteId: note.id, quests: res.data.quests })
                     if (updateQuestlineName)
