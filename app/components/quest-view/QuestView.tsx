@@ -45,6 +45,9 @@ export default function QuestView({ note, dispatch, setQuestView }: NoteComponen
     }
 
     useEffect(() => {
+        if (selectedQuest == null && questTasks.length > 0)
+            setSelectedQuest(questTasks[0].id);
+
         if (status == "ready")
             return;
 
@@ -52,6 +55,11 @@ export default function QuestView({ note, dispatch, setQuestView }: NoteComponen
         setStatus("generating");
         generateQuests(tasksWithoutQuests, true, () => setStatus("ready"), () => setStatus("error"))
     }, [])
+
+    useEffect(() => {
+        if (selectedQuest == null && questTasks.length > 0)
+            setSelectedQuest(questTasks[0].id);
+    }, [tasks])
 
     function regenerateAll() {
         setStatus("generating");
