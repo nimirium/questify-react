@@ -45,21 +45,17 @@ export default function QuestView({ note, dispatch, setQuestView }: NoteComponen
     }
 
     useEffect(() => {
-        if (selectedQuest == null && questTasks.length > 0)
-            setSelectedQuest(questTasks[0].id);
-
-        if (status == "ready")
-            return;
+        if (selectedQuest == null && questTasks.length > 0) {
+            const toSelect = questTasks.find(t => !t.completed) || questTasks[0];
+            if (toSelect) {
+                setSelectedQuest(toSelect.id);
+            }
+        }
 
         const tasksWithoutQuests = questTasks.filter((task) => task.questName == null || task.questName.length === 0);
         setStatus("generating");
         generateQuests(tasksWithoutQuests, true, () => setStatus("ready"), () => setStatus("error"))
     }, [])
-
-    useEffect(() => {
-        if (selectedQuest == null && questTasks.length > 0)
-            setSelectedQuest(questTasks[0].id);
-    }, [tasks])
 
     function regenerateAll() {
         setStatus("generating");
