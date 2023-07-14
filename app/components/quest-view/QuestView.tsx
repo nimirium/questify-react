@@ -7,7 +7,6 @@ import LoadingIndicator from "../ui/LoadingIndicator";
 import QuestTitleRow from "./QuestTitleRow";
 import QuestDescriptionRow from "./QuestDescriptionRow";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 export default function QuestView({ note, dispatch, setQuestView }: NoteComponentProps) {
     const [status, setStatus] = useState<TaskStatus>("generating");
@@ -56,11 +55,6 @@ export default function QuestView({ note, dispatch, setQuestView }: NoteComponen
         setStatus("generating");
         generateQuests(tasksWithoutQuests, true, () => setStatus("ready"), () => setStatus("error"))
     }, [])
-
-    function regenerateAll() {
-        setStatus("generating");
-        generateQuests(tasks, true, () => setStatus("ready"), () => setStatus("error"))
-    }
 
     function regenerateQuest(task: Task) {
         setGeneratingQuestId(task.id);
@@ -118,11 +112,6 @@ export default function QuestView({ note, dispatch, setQuestView }: NoteComponen
 
                     <div className="flex justify-center text-center pt-2 pb-3 text-amber-800">
                         <Button text="To-Do View" color="bg-amber-300" onClick={() => setQuestView(false)} icon={() => <ArrowBackIcon />} />
-                        {['ready', 'error'].includes(status) &&
-                            <Button text="Regenerate"
-                                color={COLOR.ORANGE}
-                                icon={() => <AutorenewIcon />}
-                                onClick={regenerateAll} />}
                     </div>
 
                 </div>

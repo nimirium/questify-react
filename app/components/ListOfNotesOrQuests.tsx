@@ -13,8 +13,10 @@ export default function ListOfNotesOrQuests() {
     const [notes, dispatch] = useReducer(notesReducer, [emptyNote()]);
 
     useEffect(() => {
-        const version = localStorage.getItem('questifyVersion');
-        if (version == null || version !== appVersion) {
+        const oldVersion = localStorage.getItem('questifyVersion');
+        const oldMajorVersion = oldVersion?.split('.')[0];
+        const majorVersion = appVersion.split('.')[0];
+        if (oldVersion == null || oldMajorVersion !== majorVersion) {
             localStorage.clear();
             localStorage.setItem('questifyVersion', appVersion);
         }

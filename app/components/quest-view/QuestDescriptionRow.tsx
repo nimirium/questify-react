@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "../ui/Button";
 import LoadingIndicator from "../ui/LoadingIndicator";
+import FocusMode from "./FocusMode";
 
 interface QuestDescriptionRowProps {
     task: Task,
@@ -30,6 +31,7 @@ export default function QuestDescriptionRow({ task, generating, canRegenerate, r
                                 <Button text="Regenerate" color="bg-amber-600" onClick={() => regenerateQuest(task)} />}
                         </div>
                         {showTldr && <div className="text-amber-400">{task.text}</div>}
+                        <FocusMode />
                     </div>
                 </>
             }
