@@ -8,7 +8,7 @@ This is the front-end part of questify.
 Experience Questify firsthand and see how your mundane tasks can become thrilling quests! Click below to start:
 - [Questify App](https://questify-to-do.vercel.app/)
 
-- ## 🎮 Features
+## 🎮 Features
 - **Gamified Experience**
 - **TO-DO list view**
 - **Questline view**
